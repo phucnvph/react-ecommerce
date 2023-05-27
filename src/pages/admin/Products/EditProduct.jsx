@@ -1,27 +1,38 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
-import { postAddProduct } from '../../../components/client/Products/ProductSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getProductId, postUpdateProduct } from '../../../components/client/Products/ProductSlice';
 import Swal from 'sweetalert2';
 
-const AddProduct = () => {
+const EditProduct = () => {
+    const { id } = useParams();
     const storage = getStorage();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { loading, product } = useSelector((state) => state.products);
     const [urlImage, setUrlImage] = useState('');
-    const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         criteriaMode: "all"
     });
 
-    const onSubmit = async (data) => {
-        data.image = urlImage;
-        console.log(data);
+    let fetchMount = true;
+    useEffect(() => {
+        if (fetchMount) {
+            dispatch(getProductId(id));
+            setUrlImage(product.image);
+        }
+        return () => {
+            fetchMount = false;
+        }
+    }, []);
 
-        //dispatch action postAddProduct từ createAsyncThunk
-        await dispatch(postAddProduct(data));
-        reset();
+    const onSubmit = async (data) => {
+        data.id = id;
+        data.image = urlImage;
+
+        await dispatch(postUpdateProduct(data));
         navigate('/admin/products');
 
         Swal.mixin({
@@ -36,8 +47,9 @@ const AddProduct = () => {
             }
         }).fire({
             icon: 'success',
-            title: 'Create Product successfully!'
-        })
+            title: 'Update Product successfully!'
+        });
+
     }
 
     const handleFileInputChange = (e) => {
@@ -47,7 +59,6 @@ const AddProduct = () => {
         };
         const storageRef = ref(storage, 'images/' + file.name);
         const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-
         uploadTask.on('state_changed',
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -58,6 +69,8 @@ const AddProduct = () => {
         );
     };
 
+    if (loading) return <div>Loading...</div>
+
     return (
         <main>
             <div className="container-fluid px-4">
@@ -67,7 +80,7 @@ const AddProduct = () => {
                         <Link to="/admin/dashboard">Dashboard</Link>
                     </li>
                     <li className="breadcrumb-item active">Products</li>
-                    <li className="breadcrumb-item">Create</li>
+                    <li className="breadcrumb-item">Edit</li>
                 </ol>
                 <div className="card mb-4">
                     <div className="card-header">
@@ -76,20 +89,20 @@ const AddProduct = () => {
                     <div className="card-body">
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="form-group">
-                                <label htmlFor="title">Title (*)</label>
-                                <input type="text" className="form-control" id="title" {...register("title", { required: true })} />
+                                <label htmlFor="title">Title (*) </label>
+                                <input type="text" defaultValue={product?.title} className="form-control" id="title" {...register("title", { required: true })} />
                                 {errors.title && <span className='text-danger'>This field title is required</span>}
                             </div>
 
                             <div className="form-group">
                                 <label htmlFor="price">Price (*)</label>
-                                <input type="number" className="form-control" id="price" {...register("price", { required: true })} />
+                                <input type="number" defaultValue={product?.price} className="form-control" id="price" {...register("price", { required: true })} />
                                 {errors.price && <span className='text-danger'>This field price is required</span>}
                             </div>
 
                             <div className="form-group">
                                 <label htmlFor="category">Category</label>
-                                <select className="form-control" id="category" {...register("category", { required: true })}>
+                                <select className="form-control" value={product?.category} id="category" {...register("category", { required: true })}>
                                     <option value="women">Women</option>
                                     <option value="men">Men</option>
                                 </select>
@@ -102,10 +115,9 @@ const AddProduct = () => {
 
                             <div className="form-group">
                                 <label htmlFor="description">Description</label>
-                                <textarea className="form-control" id="description" rows={3} defaultValue={""} {...register("description")} />
+                                <textarea className="form-control" id="description" rows={3} defaultValue={product?.description} {...register("description")} />
                             </div>
-
-                            <button className='btn btn-success' type="submit">Create</button>
+                            <button className='btn btn-success' type="submit">Edit</button>
                         </form>
 
                     </div>
@@ -115,4 +127,4 @@ const AddProduct = () => {
     )
 }
 
-export default AddProduct;
+export default EditProduct;

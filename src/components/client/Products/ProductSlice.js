@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 const API_URL = 'https://646253e84dca1a6613438fe1.mockapi.io/';
 
@@ -7,7 +8,7 @@ export const getProducts = createAsyncThunk(
     async (thunkAPI) => {
         const res = await fetch(`${API_URL}products`)
             .then((data) => data.json());
-            console.log('res', res);
+        console.log('res', res);
         return res;
     }
 )
@@ -25,13 +26,17 @@ export const getProductId = createAsyncThunk(
 export const postAddProduct = createAsyncThunk(
     'products/postAddProduct',
     async (product, { dispatch }) => {
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(product)
-        };
-        const response = await fetch(`${API_URL}products`, requestOptions)
-            .then((data) => data.json());
+        // const requestOptions = {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(product)
+        // };
+        // const response = await fetch(`${API_URL}products`, requestOptions)
+        //     .then((data) => data.json());
+
+        const response = await axios.post(`${API_URL}products`, product)
+            .then((data) => data.data);
+
         const finalPayload = response;
         return finalPayload;
     }

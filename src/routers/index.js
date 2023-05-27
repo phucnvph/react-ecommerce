@@ -12,6 +12,7 @@ import LayoutAdmin from "../components/admin/LayoutAdmin";
 import Dashboard from "../pages/admin/Dashboard/Dashboard";
 import Products from "../pages/admin/Products/Products";
 import AddProduct from "../pages/admin/Products/AddProduct";
+import EditProduct from "../pages/admin/Products/EditProduct";
 
 const RootRouters = () => {
     return (
@@ -35,7 +36,7 @@ const RootRouters = () => {
                 <Route path="products">
                     <Route index element={<Products />} />
                     <Route path="add" element={<AddProduct />} />
-                    <Route path="edit/:id" element={<AddProduct />} />
+                    <Route path="edit/:id" element={<EditProduct />} />
                 </Route>
             </Route>
         </Routes>
