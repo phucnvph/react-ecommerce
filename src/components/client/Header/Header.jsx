@@ -33,9 +33,7 @@ const Header = () => {
                             <a href="#" className="flex-c-m trans-04 p-lr-25">
                                 EN
                             </a>
-                            <a href="#" className="flex-c-m trans-04 p-lr-25">
-                                USD
-                            </a>
+                            <Link to="/login" className="flex-c-m p-lr-10 trans-04">Login</Link>
                         </div>
                     </div>
                 </div>
@@ -128,9 +126,7 @@ const Header = () => {
                                 <a href="#" className="flex-c-m p-lr-10 trans-04">
                                     EN
                                 </a>
-                                <a href="#" className="flex-c-m p-lr-10 trans-04">
-                                    USD
-                                </a>
+                                <Link to="/login" className="flex-c-m p-lr-10 trans-04">Login</Link>
                             </div>
                         </li>
                     </ul>

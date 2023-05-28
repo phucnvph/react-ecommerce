@@ -13,20 +13,27 @@ import Dashboard from "../pages/admin/Dashboard/Dashboard";
 import Products from "../pages/admin/Products/Products";
 import AddProduct from "../pages/admin/Products/AddProduct";
 import EditProduct from "../pages/admin/Products/EditProduct";
+import Login from "../pages/client/Login/Login";
+import CheckLogin from "../components/authencation/CheckLogin";
 
 const RootRouters = () => {
     return (
         <Routes>
             <Route path="/" element={<Layout />} >
-                <Route index element={<Home />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/cart" element={<ShoppingCart />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:id" element={<BlogDetail />} />
-                <Route path="/about" element={<About />} />
+
                 <Route element={<IsLogin />}>
+                    <Route index element={<Home />} />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/shop" element={<Shop />} />
+                    <Route path="/cart" element={<ShoppingCart />} />
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/blog/:id" element={<BlogDetail />} />
+                    <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
+                </Route>
+
+                <Route element={<CheckLogin />}>
+                    <Route path="/login" element={<Login />} />
                 </Route>
             </Route>
 
